@@ -5,6 +5,6 @@ from store.models import Product, OrderItem, Order
 
 def say_hello(request):
     # queryset = Product.objects.order_by('-title')
-    queryset = Product.objects.aggregate(count=Count('id'), min_price=Min('unit_price'))
+    queryset = Order.objects.aggregate(count=Count('id'))
     
     return render(request, 'hello.html', {'products': queryset})
