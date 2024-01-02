@@ -1,18 +1,15 @@
 from django.shortcuts import render
-from django.db.models.aggregates import Count, Max, Min, Avg, Sum 
-from django.db.models import Value, F, Func
-from django.db.models.functions import Concat
+from django.db.models import Value, F, ExpressionWrapper, DecimalField
+
 from store.models import Product, Customer
 
 
 def say_hello(request):
     # queryset = Product.objects.order_by('-title')
-    queryset = Customer.objects.annotate(
-        full_name=Func(F('first_name'), Value(' '), F('last_name'), function='CONCAT')
+    discounted_price = ExpressionWrapper(F('unit_price') * 0.8, output_field=DecimalField())
+    queryset = Product.objects.annotate(
+        discounted_price=discounted_price
     )
 
-    # queryset = Customer.objects.annotate(
-    #     full_name=Concat('first_name', Value(' '), 'last_name')
-    # )
     
     return render(request, 'hello.html', {'products': queryset})
