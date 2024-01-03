@@ -23,13 +23,13 @@ class Collection(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField()
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True, default='')
     unit_price = models.DecimalField(
         max_digits=6,
         decimal_places=2,
         validators=[MinValueValidator(1)])
-    inventory = models.IntegerField()
-    last_update = models.DateTimeField(auto_now_add=True)
+    inventory = models.IntegerField(validators=[MinValueValidator(1)])
+    last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
     promotions = models.ManyToManyField(Promotion, blank=True)
 
