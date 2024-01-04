@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from uuid import uuid4
 
 
 
@@ -18,7 +19,6 @@ class Collection(models.Model):
     class Meta:
         ordering = ['title']
 
-    
 
 class Product(models.Model):
     title = models.CharField(max_length=255)
@@ -38,8 +38,6 @@ class Product(models.Model):
     
     class Meta:
         ordering = ['title']
-
-
 
 
 class Customer(models.Model):
@@ -67,7 +65,6 @@ class Customer(models.Model):
         ordering = ['first_name', 'last_name']
 
 
-
 class Order(models.Model):
     PAYMENT_STATUS_PENDING = 'P'
     PAYMENT_STATUS_COMPLETE = 'C'
@@ -91,24 +88,24 @@ class OrderItem(models.Model):
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 
 
-
-
 class Address(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 
-
 class Cart(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
 
+    class Meta:
+        unique_together = [['cart', 'product']]
 
 
 class Review(models.Model):
